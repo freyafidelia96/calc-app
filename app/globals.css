@@ -1,26 +1,169 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* ==================================
+   THEME 1 — DEFAULT
+================================== */
+
+:root,
+[data-theme="1"] {
+  /* Backgrounds */
+  --color-bg: #3a4663;
+  --color-screen: #181f33;
+  --color-keypad: #242d44;
+
+  /* Regular buttons */
+  --color-key: #e6e6e6;
+  --color-key-hover: #ffffff;
+  --color-key-text: #434a59;
+
+  /* DEL and RESET */
+  --color-secondary: #647198;
+  --color-secondary-hover: #a2b2e1;
+
+  /* Equals and theme slider */
+  --color-accent: #d03f2f;
+  --color-accent-hover: #f96b5b;
+
+  /* Text */
+  --color-text: #ffffff;
+  --color-special-text: #ffffff;
+  --color-accent-text: #ffffff;
+
+  --color-key-shadow: #b3a497;
+  --color-secondary-shadow: #414e73;
+  --color-accent-shadow: #93261a;
 }
+
+/* ==================================
+   THEME 2 — LIGHT
+================================== */
+
+[data-theme="2"] {
+  /* Backgrounds */
+  --color-bg: #e6e6e6;
+  --color-screen: #eeeeee;
+  --color-keypad: #d2cdcd;
+
+  /* Regular buttons */
+  --color-key: #e6e6e6;
+  --color-key-hover: #ffffff;
+  --color-key-text: #36362c;
+
+  /* DEL and RESET */
+  --color-secondary: #378187;
+  --color-secondary-hover: #62b5bc;
+
+  /* Equals and theme slider */
+  --color-accent: #c85402;
+  --color-accent-hover: #ff8a38;
+
+  /* Text */
+  --color-text: #36362c;
+  --color-special-text: #ffffff;
+  --color-accent-text: #ffffff;
+
+  --color-key-shadow: #a79e91;
+  --color-secondary-shadow: #1b6066;
+  --color-accent-shadow: #873901;
+}
+
+/* ==================================
+   THEME 3 — PURPLE
+================================== */
+
+[data-theme="3"] {
+  /* Backgrounds */
+  --color-bg: #17062a;
+  --color-screen: #1e0936;
+  --color-keypad: #1e0936;
+
+  /* Regular buttons */
+  --color-key: #331c4d;
+  --color-key-hover: #6c34ac;
+  --color-key-text: #ffe53d;
+
+  /* DEL and RESET */
+  --color-secondary: #56077c;
+  --color-secondary-hover: #8631af;
+
+  /* Equals and theme slider */
+  --color-accent: #00ded0;
+  --color-accent-hover: #93fff8;
+
+  /* Text */
+  --color-text: #ffe53d;
+  --color-special-text: #ffffff;
+  --color-accent-text: #1a2327;
+
+  --color-key-shadow: #881c9e;
+  --color-secondary-shadow: #be15f4;
+  --color-accent-shadow: #6cf9f1;
+}
+
+/* ==================================
+   TAILWIND SEMANTIC TOKENS
+================================== */
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  /* Backgrounds */
+  --color-app-bg: var(--color-bg);
+  --color-app-screen: var(--color-screen);
+  --color-app-keypad: var(--color-keypad);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+  /* Regular buttons */
+  --color-app-key: var(--color-key);
+  --color-app-key-hover: var(--color-key-hover);
+  --color-app-key-text: var(--color-key-text);
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  /* DEL and RESET */
+  --color-app-secondary: var(--color-secondary);
+  --color-app-secondary-hover: var(--color-secondary-hover);
+
+  /* Equals and theme slider */
+  --color-app-accent: var(--color-accent);
+  --color-app-accent-hover: var(--color-accent-hover);
+
+  /* Text */
+  --color-app-text: var(--color-text);
+  --color-app-special-text: var(--color-special-text);
+  --color-app-accent-text: var(--color-accent-text);
+
+  /* Font family */
+  --font-spartan: var(--font-league-spartan), sans-serif;
+
+  /* Text Preset 1 */
+  --text-preset-1: 56px;
+  --text-preset-1--line-height: 1;
+  --text-preset-1--letter-spacing: -1px;
+  --text-preset-1--font-weight: 700;
+
+  /* Text Preset 2 */
+  --text-preset-2: 40px;
+  --text-preset-2--line-height: 1;
+  --text-preset-2--letter-spacing: -0.7px;
+  --text-preset-2--font-weight: 700;
+
+  /* Text Preset 3 */
+  --text-preset-3: 32px;
+  --text-preset-3--line-height: 1;
+  --text-preset-3--letter-spacing: -0.5px;
+  --text-preset-3--font-weight: 700;
+
+  /* Text Preset 4 */
+  --text-preset-4: 28px;
+  --text-preset-4--line-height: 1;
+  --text-preset-4--letter-spacing: -0.5px;
+  --text-preset-4--font-weight: 700;
+
+  /* Text Preset 5 */
+  --text-preset-5: 20px;
+  --text-preset-5--line-height: 1;
+  --text-preset-5--letter-spacing: -0.3px;
+  --text-preset-5--font-weight: 700;
+
+  /* Text Preset 6 */
+  --text-preset-6: 12px;
+  --text-preset-6--line-height: 1;
+  --text-preset-6--letter-spacing: 1px;
+  --text-preset-6--font-weight: 700;
 }
