@@ -20,7 +20,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${leagueSpartan.className} h-full antialiased bg-app-bg`}
     >
       <body className="h-full w-full">
-        <div className="flex flex-col md:h-201 md:w-147 sm:h-full sm:w-full mx-auto pt-25 px-6">
+        <div className="flex flex-col md:h-201 md:w-147 sm:h-full sm:w-full mx-auto md:pt-25 px-6 pt-4">
           <Header />
           <main>{children}</main>
         </div>

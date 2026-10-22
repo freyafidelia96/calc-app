@@ -169,7 +169,7 @@ export default function Home() {
           {expression.replaceAll("/", "÷")}
         </span>
       </div>
-      <div className="h-120 w-full bg-app-keypad rounded-lg p-6 grid grid-cols-4 gap-6">
+      <div className="h-120 w-full bg-app-keypad rounded-lg md:p-6 px-2 py-3 grid grid-cols-4 md:gap-6 gap-2">
         {keys.map((key) => {
           const isAccent = key === "=";
           const isSecondary = key === "DEL" || key === "RESET";
