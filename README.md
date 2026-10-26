@@ -1,36 +1,118 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Calculator App
 
-## Getting Started
+A responsive calculator built with Next.js, React, TypeScript, and Tailwind CSS. It supports the four basic arithmetic operations, decimal values, negative operands, operator precedence, touch-friendly calculator controls, and three selectable color themes.
 
-First, run the development server:
+## Features
+
+- Addition, subtraction, multiplication, and division
+- Decimal input with duplicate-decimal protection
+- Negative operands, including expressions such as `3 × -3`
+- Standard multiplication and division precedence
+- Delete and reset controls
+- Clear error states for invalid expressions and non-finite results
+- Three themes:
+  1. Default dark theme
+  2. Light theme
+  3. Purple theme
+- Responsive layout for mobile and desktop screens
+- Accessible button labels, theme radio controls, focus styles, and screen-reader result announcements
+- Horizontal scrolling for long expressions and results
+
+## Tech stack
+
+- [Next.js](https://nextjs.org/) 16 with the App Router
+- [React](https://react.dev/) 19
+- [TypeScript](https://www.typescriptlang.org/)
+- [Tailwind CSS](https://tailwindcss.com/) 4
+- [Vitest](https://vitest.dev/) and Testing Library
+- League Spartan via `next/font/google`
+
+The calculator uses the local `calculate` function in [`app/lib/calculator.ts`](./app/lib/calculator.ts) to parse and evaluate expressions. It does not rely on `mathjs` at runtime.
+
+## Getting started
+
+### Prerequisites
+
+- Node.js compatible with the installed Next.js version
+- npm
+
+### Install dependencies
+
+```bash
+npm install
+```
+
+### Start the development server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in a browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Available scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Command            | Description                                |
+| ------------------ | ------------------------------------------ |
+| `npm run dev`      | Start the Next.js development server       |
+| `npm run build`    | Create a production build                  |
+| `npm run start`    | Start the production server after building |
+| `npm run lint`     | Run ESLint                                 |
+| `npm test`         | Run Vitest in watch mode                   |
+| `npm run test:run` | Run the test suite once                    |
 
-## Learn More
+## Calculator behavior
 
-To learn more about Next.js, take a look at the following resources:
+The calculator builds an expression from the keypad and evaluates it when `=` is pressed.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- The displayed `x` multiplication symbol is converted to `*` before evaluation.
+- Multiplication and division are resolved before addition and subtraction.
+- A result is rounded to 12 significant digits to reduce common floating-point display artifacts.
+- Invalid expressions return `NaN` from the calculator function and are displayed as `Error`.
+- Division by zero produces a non-finite result and is displayed as `Error`.
+- After a successful calculation, entering a number starts a new expression; entering an operator continues from the result.
+- `DEL` removes the last character, while `RESET` returns the display to `0`.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The parser accepts numbers with optional decimal portions and operators between operands. Expressions are validated before they are evaluated; arbitrary JavaScript is never executed.
 
-## Deploy on Vercel
+## Project structure
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```text
+app/
+├── components/
+│   ├── Button.tsx       # Reusable styled calculator button
+│   └── Header.tsx       # App title and theme selector
+├── lib/
+│   ├── calculator.ts    # Expression validation and evaluation
+│   └── calculator.test.ts
+├── globals.css          # Theme variables and Tailwind design tokens
+├── layout.tsx           # Root layout, metadata, and font setup
+└── page.tsx             # Calculator UI and interaction state
+__tests__/
+└── header.test.tsx      # header interaction tests
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Testing
+
+Run the complete test suite once:
+
+```bash
+npm run test:run
+```
+
+The tests cover parser behavior such as precedence, negative operands, decimals, invalid expressions, and division by zero. The component tests cover user interactions including calculation, reset, delete, error handling, and result display behavior.
+
+## Styling and themes
+
+Theme colors are defined as CSS variables in [`app/globals.css`](./app/globals.css). The header updates the `data-theme` attribute on the document root when a theme is selected. Tailwind semantic color tokens reference those variables so the calculator components use the active theme without duplicating styles.
+
+## Deployment
+
+Build and run the production version locally with:
+
+```bash
+npm run build
+npm run start
+```
+
+The app can be deployed to any platform that supports Next.js, including [Vercel](https://vercel.com/).

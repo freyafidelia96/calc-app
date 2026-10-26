@@ -1,7 +1,8 @@
 "use client";
+
 import Button from "./components/Button";
-import { evaluate } from "mathjs";
-import { useState } from "react";
+import calculate from "./lib/calculator";
+import { useState, useEffect, useRef } from "react";
 
 const keys = [
   "7",
@@ -24,14 +25,38 @@ const keys = [
   "=",
 ];
 
+const keyNames: Record<string, string> = {
+  "+": "plus",
+  "-": "minus",
+  x: "multiply",
+  "/": "divide",
+  DEL: "delete",
+  RESET: "reset",
+  "=": "equals",
+};
+
 const operators = ["+", "-", "x", "/"];
 
 export default function Home() {
   const [expression, setExpression] = useState("0");
   const [justCalculated, setJustCalculated] = useState(false);
+  const [announcement, setAnnouncement] = useState("");
+
+  const displayRef = useRef<HTMLDivElement>(null);
+
+  // Keep the newest characters visible
+  useEffect(() => {
+    const display = displayRef.current;
+
+    if (display) {
+      display.scrollLeft = display.scrollWidth;
+    }
+  }, [expression]);
 
   function handleInput(value: string) {
     const isOperator = operators.includes(value);
+
+    setAnnouncement("");
 
     setExpression((prev) => {
       // Recover from an error
@@ -41,10 +66,8 @@ export default function Home() {
       }
 
       // After =, numbers start fresh; operators continue
-      if (justCalculated) {
-        if (!isOperator) {
-          return value === "." ? "0." : value;
-        }
+      if (justCalculated && !isOperator) {
+        return value === "." ? "0." : value;
       }
 
       const lastChar = prev.at(-1) ?? "";
@@ -56,7 +79,7 @@ export default function Home() {
           return prev + value;
         }
 
-        // Prevent replacing the minus sign in expressions like 3x-
+        // Protect negative numbers like 3x-3
         if (
           lastChar === "-" &&
           prev.length >= 2 &&
@@ -79,10 +102,8 @@ export default function Home() {
       if (value === ".") {
         const currentNumber = prev.split(/[+\-x/]/).pop() ?? "";
 
-        // Prevent multiple decimal points in one number
         if (currentNumber.includes(".")) return prev;
 
-        // Automatically insert zero after an operator
         if (operators.includes(lastChar)) {
           return prev + "0.";
         }
@@ -100,6 +121,8 @@ export default function Home() {
   }
 
   function handleDelete() {
+    setAnnouncement("");
+
     setExpression((prev) => {
       if (prev === "Error") return "0";
       return prev.slice(0, -1) || "0";
@@ -111,12 +134,12 @@ export default function Home() {
   function handleReset() {
     setExpression("0");
     setJustCalculated(false);
+    setAnnouncement("");
   }
 
   function handleEquals() {
     const calculation = expression.replaceAll("x", "*");
 
-    // Allow only supported arithmetic expressions
     const validExpression = /^-?\d+(?:\.\d+)?(?:[+\-*/]-?\d+(?:\.\d+)?)*$/.test(
       calculation,
     );
@@ -124,26 +147,30 @@ export default function Home() {
     if (!validExpression) {
       setExpression("Error");
       setJustCalculated(false);
+      setAnnouncement("Invalid expression");
       return;
     }
 
     try {
-      const result = evaluate(calculation);
+      const result = calculate(calculation);
 
       if (typeof result !== "number" || !Number.isFinite(result)) {
         setExpression("Error");
         setJustCalculated(false);
+        setAnnouncement("Calculation error");
         return;
       }
 
-      // Remove common floating-point artifacts
       const rounded = Number(result.toPrecision(12));
+      const formatted = String(rounded);
 
-      setExpression(String(rounded));
+      setExpression(formatted);
       setJustCalculated(true);
+      setAnnouncement(`Result: ${formatted}`);
     } catch {
       setExpression("Error");
       setJustCalculated(false);
+      setAnnouncement("Calculation error");
     }
   }
 
@@ -162,25 +189,47 @@ export default function Home() {
         handleInput(value);
     }
   }
+
   return (
     <div className="flex flex-col items-center justify-center gap-5">
-      <div className="h-32 w-full bg-app-screen rounded-lg p-6 flex items-end justify-end overflow-hidden">
-        <span className="text-app-text text-preset-1 max-w-full overflow-x-auto whitespace-nowrap">
-          {expression.replaceAll("/", "÷")}
-        </span>
+      {/* Display */}
+      <div className="flex h-32 w-full items-end justify-end rounded-lg bg-app-screen p-6">
+        <div
+          ref={displayRef}
+          className="w-full overflow-x-auto whitespace-nowrap text-right"
+        >
+          <output className="block min-w-max text-app-text text-preset-1">
+            {expression.replaceAll("/", "÷")}
+          </output>
+        </div>
       </div>
-      <div className="h-120 w-full bg-app-keypad rounded-lg md:p-6 px-2 py-3 grid grid-cols-4 md:gap-6 gap-2">
+
+      {/* Screen reader result announcement */}
+      <div
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+        className="sr-only"
+      >
+        {announcement}
+      </div>
+
+      {/* Keypad */}
+      <div className="grid w-full grid-cols-4 gap-2 rounded-lg bg-app-keypad px-2 py-3 md:gap-6 md:p-6">
         {keys.map((key) => {
           const isAccent = key === "=";
           const isSecondary = key === "DEL" || key === "RESET";
           const isWide = key === "RESET" || key === "=";
+
           return (
             <Button
               key={key}
+              type="button"
               variant={
                 isAccent ? "accent" : isSecondary ? "secondary" : "default"
               }
               className={isWide ? "col-span-2" : ""}
+              aria-label={keyNames[key]}
               onClick={() => handleButtonClick(key)}
             >
               {key}

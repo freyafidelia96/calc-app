@@ -1,51 +1,70 @@
 "use client";
-import { useState, useEffect } from "react";
+
+import { useState, useEffect, useId } from "react";
 
 const themes = [1, 2, 3] as const;
 type Theme = (typeof themes)[number];
 
 export default function Header() {
   const [theme, setTheme] = useState<Theme>(1);
+  const themeLabelId = useId();
 
   useEffect(() => {
     document.documentElement.dataset.theme = String(theme);
   }, [theme]);
 
   return (
-    <header className="flex flex-col justify-between py-4 text-app-text">
-      <div className="flex items-end justify-end gap-3 px-2.5">
-        {themes.map((option) => (
-          <span
-            className="text-preset-6 cursor-pointer"
-            key={option}
-            onClick={() => setTheme(option)}
-          >
-            {option}
-          </span>
-        ))}
-      </div>
-      <div className="flex justify-between items-center gap-1">
-        <h1 className="text-preset-3">calc</h1>
-        <div className="flex gap-4 items-center">
-          <span className="text-preset-6">THEME</span>
-          <div className="grid grid-cols-3 gap-1 rounded-full bg-app-keypad p-1">
+    <header className="flex items-center justify-between py-4 text-app-text">
+      <h1 className="text-preset-3">calc</h1>
+
+      <div className="flex items-end gap-4">
+        <span id={themeLabelId} className="text-preset-6 mb-1">
+          THEME
+        </span>
+
+        <div className="flex flex-col gap-1">
+          {/* Visual labels */}
+          <div aria-hidden="true" className="grid grid-cols-3 text-center">
             {themes.map((option) => (
-              <button
+              <span key={option} className="text-preset-6">
+                {option}
+              </span>
+            ))}
+          </div>
+
+          {/* Accessible theme switcher */}
+          <div
+            role="radiogroup"
+            aria-labelledby={themeLabelId}
+            className="grid grid-cols-3 gap-1 rounded-full bg-app-keypad p-1"
+          >
+            {themes.map((option) => (
+              <label
                 key={option}
-                type="button"
-                onClick={() => setTheme(option)}
-                aria-label={`Switch to theme ${option}`}
-                aria-pressed={theme === option}
-                className="flex size-4 cursor-pointer items-center justify-center"
+                className="grid size-6 cursor-pointer place-items-center"
               >
-                <span
-                  className={`size-4 rounded-full ${
-                    theme === option
-                      ? "bg-app-accent hover:bg-app-accent-hover"
-                      : ""
-                  }`}
+                <input
+                  type="radio"
+                  name="calculator-theme"
+                  value={option}
+                  checked={theme === option}
+                  onChange={() => setTheme(option)}
+                  aria-label={`Theme ${option}`}
+                  className="peer sr-only"
                 />
-              </button>
+
+                <span
+                  aria-hidden="true"
+                  className={`
+                    size-4 rounded-full
+                    peer-checked:bg-app-accent
+                    peer-checked:hover:bg-app-accent-hover
+                    peer-focus-visible:outline-2
+                    peer-focus-visible:outline-offset-2
+                    peer-focus-visible:outline-app-text
+                  `}
+                />
+              </label>
             ))}
           </div>
         </div>
